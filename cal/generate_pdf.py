@@ -29,7 +29,7 @@ class GeneratePdf():
         }
         
         # Install Webdriver
-        service = Service(ChromeDriverManager().install())
+        # service = Service(ChromeDriverManager().install())
 
         current_directory = os.getcwd()
         download_directory = os.environ.get('DOWNLOAD_DIRECTORY')
@@ -47,6 +47,8 @@ class GeneratePdf():
             options.add_argument('--user-data-dir=' + path)
             options.add_argument("--ignore-certificate-errors")
             options.add_argument("--disable-web-security")
+            options.add_argument("--disable-content-safety-policy")
+            options.add_argument("--disable-features=CrossSiteDocumentBlockingIfIsolating")  # Disables 'X-Frame-Options'
             options.add_argument('disable-infobars')
             options.add_experimental_option("excludeSwitches", ["enable-automation"])
             options.add_experimental_option("prefs", {"download.prompt_for_download": False})
@@ -64,7 +66,7 @@ class GeneratePdf():
             options.add_experimental_option("prefs", profile)
 
             # Create Driver Instance
-            driver = webdriver.Chrome(options=options, service=service)
+            driver = webdriver.Chrome(options=options)
             driver.get(os.environ.get('TARGET_URL'))
 
             self.driver = driver
@@ -149,15 +151,17 @@ class GeneratePdf():
             return self.result
 
     def generatePDF(self, file_name):
+        print('generating pdf....')
         pdf_path = os.environ.get('DOWNLOAD_DIRECTORY')
         downloaded_org_file = f"{pdf_path}/SAT.pdf"
         renamed_file = f"{pdf_path}/{file_name}.pdf"
 
         # HANDLE PDF
-        # try:
-        #     os.remove(downloaded_org_file)
-        # except Exception as e:
-        #     print("===Error===", e)
+        try:
+            os.remove(downloaded_org_file)
+            os.remove(renamed_file)
+        except Exception as e:
+            print("===Error===", e)
 
         # Switch to main window
         self.driver.switch_to.default_content()
@@ -169,9 +173,13 @@ class GeneratePdf():
         
         # Wait download file
         time.sleep(15)
+        print('pdf renamed....')
 
         # Rename file
-        os.rename(downloaded_org_file, renamed_file)
+        try:
+             os.rename(downloaded_org_file, renamed_file)
+        except Exception as e:
+            print("===Error===", e)
 
         # Handle new pdf file
         doc = fitz.open(renamed_file)
