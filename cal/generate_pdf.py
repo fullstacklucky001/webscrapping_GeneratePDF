@@ -46,6 +46,7 @@ class GeneratePdf():
 
             options.add_argument('--user-data-dir=' + path)
             options.add_argument("--ignore-certificate-errors")
+            options.add_argument("--disable-web-security")
             options.add_argument('disable-infobars')
             options.add_experimental_option("excludeSwitches", ["enable-automation"])
             options.add_experimental_option("prefs", {"download.prompt_for_download": False})
@@ -55,8 +56,6 @@ class GeneratePdf():
 
             profile = {
                 "plugins.plugins_list": [{ "enabled": False, "name": "Chrome PDF Viewer"}],
-                # 'profile.default_content_settings.popups': 0,
-                # 'profile.content_settings.exceptions.automatic_downloads.*.setting': 1,
                 "download.default_directory": download_full_path,
                 "download.extensions_to_open": "",
                 "plugins.always_open_pdf_externally": True
@@ -150,11 +149,10 @@ class GeneratePdf():
             return self.result
 
     def generatePDF(self, file_name):
-        
         pdf_path = os.environ.get('DOWNLOAD_DIRECTORY')
         downloaded_org_file = f"{pdf_path}/SAT.pdf"
         renamed_file = f"{pdf_path}/{file_name}.pdf"
-        
+
         # HANDLE PDF
         # try:
         #     os.remove(downloaded_org_file)
