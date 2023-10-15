@@ -70,7 +70,7 @@ class GeneratePdf():
             driver.get(os.environ.get('TARGET_URL'))
 
             self.driver = driver
-            self.wait_10 = WebDriverWait(driver, 10)
+            # self.wait_10 = WebDriverWait(driver, 10)
             print('driver', driver)
             print('page loading...')
         except:
@@ -172,7 +172,7 @@ class GeneratePdf():
         current_url = self.driver.current_url
         
         # Wait download file
-        time.sleep(15)
+        time.sleep(10)
         print('pdf renamed....')
 
         # Rename file
