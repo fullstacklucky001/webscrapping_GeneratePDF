@@ -1,22 +1,21 @@
-from PIL import Image
 import requests
 import base64
 import fitz
-from pyzbar import pyzbar
-from PIL import Image
 import base64
 import time
+import os
+# import pyautogui
+from PIL import Image
+from pyzbar import pyzbar
 from bs4 import BeautifulSoup
-from re import fullmatch
-from urllib.parse import quote
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
-import os
 from dotenv import load_dotenv
 
 class GeneratePdf():
@@ -29,7 +28,7 @@ class GeneratePdf():
         }
         
         # Install Webdriver
-        # service = Service(ChromeDriverManager().install())
+        service = Service(ChromeDriverManager().install())
 
         current_directory = os.getcwd()
         download_directory = os.environ.get('DOWNLOAD_DIRECTORY')
@@ -66,7 +65,7 @@ class GeneratePdf():
             options.add_experimental_option("prefs", profile)
 
             # Create Driver Instance
-            driver = webdriver.Chrome(options=options)
+            driver = webdriver.Chrome(options=options, service=service)
             driver.get(os.environ.get('TARGET_URL'))
 
             self.driver = driver
@@ -168,8 +167,18 @@ class GeneratePdf():
         WebDriverWait(self.driver, 20).until(EC.frame_to_be_available_and_switch_to_it((By.ID, "iframetoload")))
         WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.ID, "formReimpAcuse:j_idt50"))).click()
 
+        time.sleep(2)
         self.driver.switch_to.window(self.driver.window_handles[-1])
+
         current_url = self.driver.current_url
+
+        # Simulate the keyboard shortcut to save the file (Ctrl + S)
+        # pyautogui.hotkey('ctrl', 's')
+        # time.sleep(5)  # Wait for the save dialog to appear
+
+        # Type the desired filename and press Enter
+        # pyautogui.write(file_name)
+        # pyautogui.press('enter')
         
         # Wait download file
         time.sleep(10)
