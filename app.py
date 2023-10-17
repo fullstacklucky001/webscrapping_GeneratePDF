@@ -24,7 +24,6 @@ def scraping():
     method = request.json
     rfc = method["rfc"]
     password = method["password"]
-    file_name = method["filename"]
 
     s = Session()
     result = s.query(User).filter_by(rfc = rfc).first()
@@ -55,7 +54,7 @@ def scraping():
                 s.commit()
                 return jsonify(s.query(User).filter_by(rfc = rfc).first().data)
     else:
-        data = generate_pdf_intance.login(rfc, password, file_name)
+        data = generate_pdf_intance.login(rfc, password)
         if data['status'] != 'OK':
             return jsonify(data)
         else:

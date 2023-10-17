@@ -4,7 +4,9 @@ import fitz
 import base64
 import time
 import os
-# import pyautogui
+import shutil
+import time
+import calendar
 from PIL import Image
 from pyzbar import pyzbar
 from bs4 import BeautifulSoup
@@ -14,9 +16,9 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import load_dotenv
+
 
 class GeneratePdf():
     def __init__(self):
@@ -32,8 +34,14 @@ class GeneratePdf():
 
         current_directory = os.getcwd()
         download_directory = os.environ.get('DOWNLOAD_DIRECTORY')
-        download_full_path = os.path.join(current_directory, download_directory)
+        download_root_path = os.path.join(current_directory, download_directory)
+        
+        current_GMT = time.gmtime()
 
+        time_stamp = calendar.timegm(current_GMT)
+
+        download_full_path = os.path.join(download_root_path, str(time_stamp))
+        self.download_full_path = download_full_path
         os.makedirs(download_full_path, exist_ok=True)
 
         try:
@@ -47,13 +55,14 @@ class GeneratePdf():
             options.add_argument("--ignore-certificate-errors")
             options.add_argument("--disable-web-security")
             options.add_argument("--disable-content-safety-policy")
-            options.add_argument("--disable-features=CrossSiteDocumentBlockingIfIsolating")  # Disables 'X-Frame-Options'
+            options.add_argument("--disable-features=CrossSiteDocumentBlockingIfIsolating")
             options.add_argument('disable-infobars')
             options.add_experimental_option("excludeSwitches", ["enable-automation"])
             options.add_experimental_option("prefs", {"download.prompt_for_download": False})
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--disable-javascript")
 
             profile = {
                 "plugins.plugins_list": [{ "enabled": False, "name": "Chrome PDF Viewer"}],
@@ -77,7 +86,7 @@ class GeneratePdf():
             driver.quit()
             print("Error: Driver loading failed")
 
-    def login(self, rfc, pwd, file_name):
+    def login(self, rfc, pwd):
         try:
             self.driver.switch_to.frame("iframetoload")
             rfc_input = self.driver.find_element(By.ID, "rfc")
@@ -143,24 +152,14 @@ class GeneratePdf():
                     self.driver.quit()
                     return self.result
             except:
-                return self.generatePDF(file_name)
+                return self.generatePDF()
 
         except:
             self.driver.quit()
             return self.result
 
-    def generatePDF(self, file_name):
-        print('generating pdf....')
-        pdf_path = os.environ.get('DOWNLOAD_DIRECTORY')
-        downloaded_org_file = f"{pdf_path}/SAT.pdf"
-        renamed_file = f"{pdf_path}/{file_name}.pdf"
-
-        # HANDLE PDF
-        try:
-            os.remove(downloaded_org_file)
-            os.remove(renamed_file)
-        except Exception as e:
-            print("===Error===", e)
+    def generatePDF(self):
+        downloaded_org_file = f"{self.download_full_path}/SAT.pdf"
 
         # Switch to main window
         self.driver.switch_to.default_content()
@@ -170,28 +169,11 @@ class GeneratePdf():
         time.sleep(2)
         self.driver.switch_to.window(self.driver.window_handles[-1])
 
-        current_url = self.driver.current_url
-
-        # Simulate the keyboard shortcut to save the file (Ctrl + S)
-        # pyautogui.hotkey('ctrl', 's')
-        # time.sleep(5)  # Wait for the save dialog to appear
-
-        # Type the desired filename and press Enter
-        # pyautogui.write(file_name)
-        # pyautogui.press('enter')
-        
         # Wait download file
         time.sleep(10)
-        print('pdf renamed....')
-
-        # Rename file
-        try:
-             os.rename(downloaded_org_file, renamed_file)
-        except Exception as e:
-            print("===Error===", e)
 
         # Handle new pdf file
-        doc = fitz.open(renamed_file)
+        doc = fitz.open(downloaded_org_file)
 
         print("pdf page len=", len(doc))
         for page_num in range(len(doc)):
@@ -213,8 +195,12 @@ class GeneratePdf():
                 break
             if flag == False: break
 
-        with open(renamed_file, "rb") as file:
+        doc.close()
+
+        with open(downloaded_org_file, "rb") as file:
             encoded_pdf = base64.b64encode(file.read()).decode('utf-8')
+
+        file.close()
         
         self.result["status"] = "OK"
         self.result["pdfbase64"] = str(encoded_pdf)
@@ -253,6 +239,12 @@ class GeneratePdf():
                 regi_value = ""
                 fecha_de_value = ""
         self.result['data']['características_fiscales'] = reg_temp_arr
+
+        try:
+            shutil.rmtree(self.download_full_path)
+            print(f"Directory '{self.download_full_path}' has been successfully deleted.")
+        except OSError as e:
+            print(f"Error: {e.filename} - {e.strerror}")
 
         self.driver.quit()
         return self.result
