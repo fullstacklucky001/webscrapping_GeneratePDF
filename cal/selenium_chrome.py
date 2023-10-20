@@ -75,8 +75,8 @@ class GeneratePdf():
             options.add_experimental_option("prefs", profile)
 
             # Create Driver Instance
-            driver = webdriver.Chrome(options=options)
-            # driver = webdriver.Chrome(options=options, service=service)
+            # driver = webdriver.Chrome(options=options)
+            driver = webdriver.Chrome(options=options, service=service)
             driver.get(os.environ.get('TARGET_URL'))
 
             self.driver = driver
