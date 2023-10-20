@@ -165,6 +165,7 @@ class GeneratePdf():
         # Handle new pdf file
         doc = fitz.open(downloaded_org_file)
 
+
         flag = 1
         for page_num in range(len(doc)):
             page = doc[page_num]
