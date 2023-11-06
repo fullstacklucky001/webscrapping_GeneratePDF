@@ -1,10 +1,9 @@
 from flask import Flask, request, jsonify
-from cal.selenium_chrome import GeneratePdf
+from playwright_mode import generate_pdf
 from tabledef import *
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from flask_cors import CORS
-import time
 
 application = Flask(__name__)
 application.secret_key = 'web_app_for_scraping_mx_gov'
@@ -16,10 +15,12 @@ Session = sessionmaker(bind=engine)
 
 @application.route('/')
 def hello():
+    print("hello world")
     return 'Welcome to Web Client!'
 
 @application.route('/scraping',  methods=["POST"])
 def scraping():
+    print("get request")
     method = request.json
     rfc = method["rfc"]
     password = method["password"]
@@ -51,22 +52,18 @@ def scraping():
                 s.commit()
                 return jsonify(s.query(User).filter_by(rfc = rfc).first().data)
     else:
-        generate_pdf_instance = GeneratePdf()
 
-        # driver = selenium_manager.get_driver()
-        data = generate_pdf_instance.login(rfc, password)
+        data = generate_pdf(rfc, password)
         
         if data['status'] != 'OK':
             return jsonify(data)
         else:
-            start_insert_db_time = time.time()
             user = User(rfc, password, data, current_dt)
             s.add(user)
             s.commit()
 
-            res = jsonify(s.query(User).filter_by(rfc = rfc).first().data)
-            print(f"========= Handle DB time: {time.time() - start_insert_db_time:.2f} seconds=======")
-            return res
+            print("sending result to client...")
+            return jsonify(s.query(User).filter_by(rfc = rfc).first().data)
 
 @application.route('/delete_user_cache/<rfc>')
 def delete_user_cache(rfc):
