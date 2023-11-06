@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from playwright_mode import generate_pdf
+from playwright_mode import run_playwright
 from tabledef import *
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -53,7 +53,7 @@ def scraping():
                 return jsonify(s.query(User).filter_by(rfc = rfc).first().data)
     else:
 
-        data = generate_pdf(rfc, password)
+        data = run_playwright(rfc, password)
         
         if data['status'] != 'OK':
             return jsonify(data)

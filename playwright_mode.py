@@ -4,17 +4,34 @@ import time
 import requests
 import calendar
 import json
+from pyzbar import pyzbar
+from pyzbar.pyzbar import decode
+from PIL import Image
+import fitz
 
 from playwright.sync_api import sync_playwright
 
-def generate_pdf(rfc, password):
+def run_playwright(rfc, password):
+
+    checked_cookie_file = f'{rfc}.json'
+    checked_cookie_file_path = os.path.join('Cookies', checked_cookie_file)
+
+    if os.path.exists(checked_cookie_file_path):
+        print(f"The file {checked_cookie_file} exists in the directory {checked_cookie_file_path}.")
+        last_modified_time = os.path.getmtime(checked_cookie_file_path)
+        print('elaspes time=', time.time() - last_modified_time)
+        if time.time() - last_modified_time > 60 * 15 : 
+            return generate_cookie_pdf(rfc, password)
+        else:
+            return generate_pdf(checked_cookie_file_path)
+    else:
+        print(f"The file {checked_cookie_file} does not exists in the directory {checked_cookie_file_path}.")
+        return generate_cookie_pdf(rfc, password)
+
+
+def generate_cookie_pdf(rfc, password):
     with sync_playwright() as p:
-
-        start = time.time()
-        print('Start loading cookies ...')
-
         profile_path = get_profile_path()
-
         browser = p.chromium.launch_persistent_context(
             profile_path,
             headless=False,
@@ -46,45 +63,8 @@ def generate_pdf(rfc, password):
             json.dump(page.context.cookies(), cookies_file, indent=4)
 
         print(f'cookietime {time.time() - cookie_time:.2f} seconds')
-        print(f'Cookies loaded on {time.time() - start:.2f} seconds, They are saved in {cookies_file_name}')
-
-        start = time.time()
-        # profile_path = get_profile_path()
-
-        print('launch_persistent_context')
-
-        # browser = p.chromium.launch_persistent_context(
-        #     profile_path,
-        #     headless=False,
-        #     chromium_sandbox=False,
-        #     accept_downloads=True,
-        #     devtools=False,
-        #     ignore_default_args=["--enable-automation"]
-        # )
-
-        # page = browser.new_page()
-
-       
-
-        # with open(cookie_file_path, 'r') as cookies_file:
-            # cookies = json.load(cookies_file)
-
-
-        # page.context.add_cookies(cookies)
-        page.goto(
-            "https://rfcampc.siat.sat.gob.mx/app/seg/SessionBroker?url=/PTSC/IdcSiat/autc/ReimpresionTramite/ConsultaTramite.jsf&parametro=c&idSessionBit=&idSessionBit=null")
-
-        # captcha_element = page.get_by_text('Captcha:')
-
-        # if captcha_element:
-        #     load_cookies()
-
-        #     with open(cookies_file_name, 'r') as cookies_file:
-        #         cookies = json.load(cookies_file)
-
-        #     page.context.add_cookies(cookies)
-        #     page.reload()
-
+        page.goto(os.environ.get('TARGET_URL'))
+            
         current_GMT = time.gmtime()
         time_stamp = calendar.timegm(current_GMT)
 
@@ -94,85 +74,7 @@ def generate_pdf(rfc, password):
         pdf_path = os.path.join('Downloads', str(time_stamp) + '.pdf')
         download.save_as(pdf_path)
 
-        from pyzbar import pyzbar
-        from pyzbar.pyzbar import decode
-        from PIL import Image
-        import fitz
-
-        doc = fitz.open(pdf_path)
-
-        flag = 1
-        for page_num in range(len(doc)):
-            pa = doc[page_num]
-
-            pix = pa.get_pixmap()
-            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-
-            qr_codes = pyzbar.decode(img)
-
-            for qr_code in qr_codes:
-                code = qr_code.data.decode("utf-8")
-                print("QR Code Data:", code)
-                flag = 0
-                break
-            if flag == False: break
-
-        doc.close()
-
-        with open(pdf_path, "rb") as file:
-
-            import base64
-
-            encoded_pdf = base64.b64encode(file.read()).decode('utf-8')
-
-        result = {
-            'status': 'OK',
-            'pdfbase64': str(encoded_pdf),
-            'url': str(code),
-            'data': {}
-        }
-
-        page.goto(result['url'])
-
-        html = page.content()
-        page.close()
-        from bs4 import BeautifulSoup
-
-        soup = BeautifulSoup(html, 'html.parser')
-
-        td_elements = soup.find_all('td', attrs={'role': 'gridcell'})
-
-        regi_value = ""
-        fecha_de_value = ""
-        reg_temp_arr = []
-        for td in td_elements:
-            span = td.find('span')
-
-            if span is not None:
-                if span.text:
-                    temp = str(span.text)
-                    temp = temp.replace(" ", "_")
-                    temp = temp.replace(":", "")
-                    temp = temp.lower()
-            else:
-                if td.text:
-                    if temp == 'régimen':
-                        regi_value = td.text
-                    elif temp == 'fecha_de_alta':
-                        fecha_de_value = td.text
-                    else:
-                        result['data'][temp] = td.text
-
-            if regi_value and fecha_de_value:
-                reg_temp_arr.append({"régimen": regi_value, "fecha_de_alta": fecha_de_value})
-                regi_value = ""
-                fecha_de_value = ""
-        result['data']['características_fiscales'] = reg_temp_arr
-
-        print(time.time() - start)
-
-        return result
-
+        return process_pdf(page, pdf_path)
 
 def get_profile_path():
     browser_folders_path = os.path.join(os.getcwd(), 'Browser')
@@ -226,135 +128,107 @@ def pass_captcha(img_url):
     
     return  captcha_code
 
+def generate_pdf(cookie_file_path):
+    with sync_playwright() as p:
+        profile_path = get_profile_path()
+        browser = p.chromium.launch_persistent_context(
+            profile_path,
+            headless=False,
+            chromium_sandbox=False,
+            accept_downloads=True,
+            devtools=False,
+            ignore_default_args=["--enable-automation"]
+        )
 
-# def generate_pdf():
-#     with sync_playwright() as p:
-#         start = time.time()
-#         print('start')
-#         profile_path = get_profile_path()
+        page = browser.new_page()
 
-#         print('launch_persistent_context')
+        with open(cookie_file_path, 'r') as cookies_file:
+            cookies = json.load(cookies_file)
 
-#         browser = p.chromium.launch_persistent_context(
-#             profile_path,
-#             headless=False,
-#             chromium_sandbox=False,
-#             accept_downloads=True,
-#             devtools=False,
-#             ignore_default_args=["--enable-automation"]
-#         )
+        page.context.add_cookies(cookies)
+        page.goto(os.environ.get('TARGET_URL'))
 
-#         page = browser.new_page()
+        current_GMT = time.gmtime()
+        time_stamp = calendar.timegm(current_GMT)
 
-#         method = request.json
-
-#         rfc = method["rfc"]
-
-#         cookies_file_name = f"{rfc}.json"
-#         with open(cookies_file_name, 'r') as cookies_file:
-#             cookies = json.load(cookies_file)
+        with page.expect_download() as download_info:
+            page.get_by_text('Generar Constancia').click()
+        download = download_info.value
+        pdf_path = os.path.join('Downloads', str(time_stamp) + '.pdf')
+        download.save_as(pdf_path)
 
 
-#         print(cookies)
-#         page.context.add_cookies(cookies)
-#         page.goto(
-#             "https://rfcampc.siat.sat.gob.mx/app/seg/SessionBroker?url=/PTSC/IdcSiat/autc/ReimpresionTramite/ConsultaTramite.jsf&parametro=c&idSessionBit=&idSessionBit=null")
+        return process_pdf(page, pdf_path)
+    
+def process_pdf(page, pdf_path):
+    doc = fitz.open(pdf_path)
 
-#         # captcha_element = page.get_by_text('Captcha:')
+    flag = 1
+    for page_num in range(len(doc)):
+        pa = doc[page_num]
 
-#         # if captcha_element:
-#         #     load_cookies()
+        pix = pa.get_pixmap()
+        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
 
-#         #     with open(cookies_file_name, 'r') as cookies_file:
-#         #         cookies = json.load(cookies_file)
+        qr_codes = pyzbar.decode(img)
 
-#         #     page.context.add_cookies(cookies)
-#         #     page.reload()
+        for qr_code in qr_codes:
+            code = qr_code.data.decode("utf-8")
+            print("QR Code Data:", code)
+            flag = 0
+            break
+        if flag == False: break
 
-#         current_GMT = time.gmtime()
-#         time_stamp = calendar.timegm(current_GMT)
+    doc.close()
 
-#         with page.expect_download() as download_info:
-#             page.get_by_text('Generar Constancia').click()
-#         download = download_info.value
-#         pdf_path = os.path.join('Downloads', str(time_stamp) + '.pdf')
-#         download.save_as(pdf_path)
+    with open(pdf_path, "rb") as file:
 
-#         from pyzbar import pyzbar
-#         from pyzbar.pyzbar import decode
-#         from PIL import Image
-#         import fitz
+        import base64
 
-#         doc = fitz.open(pdf_path)
+        encoded_pdf = base64.b64encode(file.read()).decode('utf-8')
 
-#         flag = 1
-#         for page_num in range(len(doc)):
-#             pa = doc[page_num]
+    result = {
+        'status': 'OK',
+        'pdfbase64': str(encoded_pdf),
+        'url': str(code),
+        'data': {}
+    }
 
-#             pix = pa.get_pixmap()
-#             img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+    page.goto(result['url'])
 
-#             qr_codes = pyzbar.decode(img)
+    html = page.content()
+    page.close()
+    from bs4 import BeautifulSoup
 
-#             for qr_code in qr_codes:
-#                 code = qr_code.data.decode("utf-8")
-#                 print("QR Code Data:", code)
-#                 flag = 0
-#                 break
-#             if flag == False: break
+    soup = BeautifulSoup(html, 'html.parser')
 
-#         doc.close()
+    td_elements = soup.find_all('td', attrs={'role': 'gridcell'})
 
-#         with open(pdf_path, "rb") as file:
+    regi_value = ""
+    fecha_de_value = ""
+    reg_temp_arr = []
+    for td in td_elements:
+        span = td.find('span')
 
-#             import base64
+        if span is not None:
+            if span.text:
+                temp = str(span.text)
+                temp = temp.replace(" ", "_")
+                temp = temp.replace(":", "")
+                temp = temp.lower()
+        else:
+            if td.text:
+                if temp == 'régimen':
+                    regi_value = td.text
+                elif temp == 'fecha_de_alta':
+                    fecha_de_value = td.text
+                else:
+                    result['data'][temp] = td.text
 
-#             encoded_pdf = base64.b64encode(file.read()).decode('utf-8')
+        if regi_value and fecha_de_value:
+            reg_temp_arr.append({"régimen": regi_value, "fecha_de_alta": fecha_de_value})
+            regi_value = ""
+            fecha_de_value = ""
+    result['data']['características_fiscales'] = reg_temp_arr
 
-#         result = {
-#             'status': 'OK',
-#             'pdfbase64': str(encoded_pdf),
-#             'url': str(code),
-#             'data': {}
-#         }
-
-#         page.goto(result['url'])
-
-#         html = page.content()
-#         page.close()
-#         from bs4 import BeautifulSoup
-
-#         soup = BeautifulSoup(html, 'html.parser')
-
-#         td_elements = soup.find_all('td', attrs={'role': 'gridcell'})
-
-#         regi_value = ""
-#         fecha_de_value = ""
-#         reg_temp_arr = []
-#         for td in td_elements:
-#             span = td.find('span')
-
-#             if span is not None:
-#                 if span.text:
-#                     temp = str(span.text)
-#                     temp = temp.replace(" ", "_")
-#                     temp = temp.replace(":", "")
-#                     temp = temp.lower()
-#             else:
-#                 if td.text:
-#                     if temp == 'régimen':
-#                         regi_value = td.text
-#                     elif temp == 'fecha_de_alta':
-#                         fecha_de_value = td.text
-#                     else:
-#                         result['data'][temp] = td.text
-
-#             if regi_value and fecha_de_value:
-#                 reg_temp_arr.append({"régimen": regi_value, "fecha_de_alta": fecha_de_value})
-#                 regi_value = ""
-#                 fecha_de_value = ""
-#         result['data']['características_fiscales'] = reg_temp_arr
-
-#         print(time.time() - start)
-
-#         return result
+    return result
