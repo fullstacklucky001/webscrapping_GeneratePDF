@@ -15,12 +15,10 @@ Session = sessionmaker(bind=engine)
 
 @application.route('/')
 def hello():
-    print("hello world")
     return 'Welcome to Web Client!'
 
 @application.route('/scraping',  methods=["POST"])
 def scraping():
-    print("get request")
     method = request.json
     rfc = method["rfc"]
     password = method["password"]
@@ -62,7 +60,6 @@ def scraping():
             s.add(user)
             s.commit()
 
-            print("sending result to client...")
             return jsonify(s.query(User).filter_by(rfc = rfc).first().data)
 
 @application.route('/delete_user_cache/<rfc>')

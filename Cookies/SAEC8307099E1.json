@@ -1,7 +1,7 @@
 [
     {
         "name": "f5avrbbbbbbbbbbbbbbbb",
-        "value": "GFGGFDJMKHPCIOANLHLMGBFPLFLDIBHGELLGDNOAJPNHBMGPOGJBAFBPKLHHKMNAHIFDCFDMAGGAHILBKBKADLKOIAFPHIEAKNLOLJOEILLKHBHMPJHPPJOKFGBPDPEI",
+        "value": "AIBAFLLNBJELFDAKACLHJFEOELKCMNMEHKMOJEPJPEAFGAJFMOFBHLGLHIANLLEMHOIDAFJBDLGBKBENHHBANMDBHGHCFJMBHLGAPGJOKJDAKMELOOJGJABBIBPEMDLG",
         "domain": "login.siat.sat.gob.mx",
         "path": "/nidp/gobmx/assets/fonts/bootstrap",
         "expires": -1,
@@ -11,7 +11,7 @@
     },
     {
         "name": "f5avrbbbbbbbbbbbbbbbb",
-        "value": "AEEHNJBIPNLMEHMFGLDJLOOEBOONFHNAFDHILNOACGFAJBBKLNCGHMOIAFAJMBCBJLCDMIJLAGBPMDGEIPGANBMPIAJDNLBIHHJDEHDGNIGHKICCIIEAFDIFIIOFJALL",
+        "value": "JIJALIDLLAMPBIMIDNDNPCFEMLCIBOCCNFHECPFLOHAFBIADDGCCCKKALEEABGEAIKBDLLOHKMMIIPPFKIAAKEEHOGEGIFHMINEKMJFLAGACOAONJFMLAGMMLANMGBCK",
         "domain": "login.siat.sat.gob.mx",
         "path": "/nidp/gobmx/assets/scripts",
         "expires": -1,
@@ -21,7 +21,7 @@
     },
     {
         "name": "f5avrbbbbbbbbbbbbbbbb",
-        "value": "MGPHHFCJKDIPFLIEJFBDCJKDFNLAKNGLMJFJIKLJAKNFCDKIEKHHCLAMFONHFMBODBIDNGNHAGOKHIKJIBMAKEEAIAFNBHDEIIGBDBKDLIINLCNECOKFKLBPJPGOLIFN",
+        "value": "FLALODGBJEGCKANOLKJDIBDCJJLBPOHINEHHJIFHAGDAPHKBBGKGBKMMDKNMEHKEOKADEOKNBLKIIBBIFIDAKEKDHGBLKKCDBCFKLKBLAELALFFDDBMELIBODOKIFFEO",
         "domain": "login.siat.sat.gob.mx",
         "path": "/nidp/gobmx/assets/styles",
         "expires": -1,
@@ -31,7 +31,7 @@
     },
     {
         "name": "f5avrbbbbbbbbbbbbbbbb",
-        "value": "FBPIKBONHDLHGJANFHBAPHGPBDHBBGGFGDFOMFBDMOKIBAMEIGBHCFOLNEFOMCPDIBNDJGMBBGBKJPFCIONAFCDHIAMANOIMLCGIHHLDFFLHFICGEOCHDACBFIPBKPFO",
+        "value": "OKHLOEOMACKJMGICODKLBCNEHAOCLFEHHGDEENPIHCMPBCBMOOLKJHPLFPEKEOKDNLLDIBDIDLIKOGLODMOAPHOGHGNEMLOGAEPFCONJBKICMJLAMFKFNKACKFNODHOI",
         "domain": "login.siat.sat.gob.mx",
         "path": "/nidp/gobmx/assets/images",
         "expires": -1,
@@ -41,7 +41,7 @@
     },
     {
         "name": "f5avrbbbbbbbbbbbbbbbb",
-        "value": "NDNIEOIHLONIKBNIKJEHFKBLKJLJKPIDJOHDNGCBAKJKNNDEGDNKLOOIGJHEBDBFOMFDDAIOAGONADIFEMAAHGFBIAPMPEKBDIDAOGCPALJNIMOEILBEJPMPJDEKHFGP",
+        "value": "FOFHKMEKNDCFJGIHCPNLCDBFLDOIKNKHCPEPGBPDFMKMGMNOOLHIBOCDOCJAKONJCOFDDEGADLMEECCFACIAGAECHGOIBCBINMADNPGCMBOCNLLEAMHCKJFJMPJHNHMP",
         "domain": "login.siat.sat.gob.mx",
         "path": "/nidp/gobmx/assets/fonts",
         "expires": -1,
@@ -51,17 +51,7 @@
     },
     {
         "name": "f5avrbbbbbbbbbbbbbbbb",
-        "value": "KIMDKEGDJPFAEOJOHHLKDMKMGKFIIFNJMEPKEAMKOCAPKGNNPOJOJBAHIDFMANEIELKDIDICBGLCPCNCDAAANGAEIAIPFGHNPEBEENODAOCKEAJDHNKBOKIHONEOLJBD",
-        "domain": "login.siat.sat.gob.mx",
-        "path": "/nidp/saml2",
-        "expires": -1,
-        "httpOnly": true,
-        "secure": true,
-        "sameSite": "Lax"
-    },
-    {
-        "name": "f5avrbbbbbbbbbbbbbbbb",
-        "value": "AMGJACHOKJFJOFJMLEANPEKEIELENFJOCHMLPHCBDLAKAICJEDHHCEMEPOJJLINPCGDDBGBLBGNIJHBLJNHACPIKIALHGHEKFGJENLFAGFLGONHCMIEPMADMPMFKECFD",
+        "value": "DFNOGGPBGKJFECNEJFMKKANLPKHIGCDJHGEKHIDKIGIMGGIOJPBHDMGCLFEFPCOAIDNDDFDJBLFGHACDHJDAKFDJHGFACDLADMBKEEFMKNIADAEJFAOINELIJPOJCNHE",
         "domain": "login.siat.sat.gob.mx",
         "path": "/nidp/idff",
         "expires": -1,
@@ -80,13 +70,13 @@
         "sameSite": "Lax"
     },
     {
-        "name": "ZNPCQ003-31313400",
-        "value": "79db2a8c",
-        "domain": ".rfcampc.siat.sat.gob.mx",
-        "path": "/saml2",
+        "name": "JSESSIONID",
+        "value": "59F0380E4E748102969EA2E291E563F5",
+        "domain": "rfcampc.siat.sat.gob.mx",
+        "path": "/nesp",
         "expires": -1,
-        "httpOnly": false,
-        "secure": false,
+        "httpOnly": true,
+        "secure": true,
         "sameSite": "Lax"
     },
     {
@@ -101,7 +91,7 @@
     },
     {
         "name": "UrnNovellNidpClusterMemberId",
-        "value": "~03~02fbf~1B~1A~1B~7F~7C~7D",
+        "value": "~03~02fbf~1B~1A~1B~7F~7C~7C",
         "domain": "login.siat.sat.gob.mx",
         "path": "/nidp",
         "expires": -1,
@@ -111,7 +101,7 @@
     },
     {
         "name": "JSESSIONID",
-        "value": "B2F8CAD94F36BBE2197A6D782E165239",
+        "value": "2F412D890BCBBE6D0A4B9ACAB3B63D28",
         "domain": "login.siat.sat.gob.mx",
         "path": "/nidp",
         "expires": -1,
@@ -120,18 +110,18 @@
         "sameSite": "Lax"
     },
     {
-        "name": "JSESSIONID",
-        "value": "E2FD8C94D6AF6810475AE932FAB4883F",
-        "domain": "rfcampc.siat.sat.gob.mx",
-        "path": "/nesp",
+        "name": "IPCZQX03f97ac564",
+        "value": "0a00cc0041151ea84353d2bd9a4cf49057597f49",
+        "domain": ".rfcampc.siat.sat.gob.mx",
+        "path": "/",
         "expires": -1,
-        "httpOnly": true,
-        "secure": true,
+        "httpOnly": false,
+        "secure": false,
         "sameSite": "Lax"
     },
     {
         "name": "F5-PROD-SIAT-LOGIN-443",
-        "value": "!I0UGnh4+Tu+KfGSfEf4+RrzZf1MVP7o/b+/jIMfpjUiTdV/7ucAAVcZRH2D6OaGx8QF9VDpthqB6Bw==",
+        "value": "!Uu4+m650mPCOwyJ4yKqWxTttqaADesTD3pDPGU6jW/FdKKlaPXhgLS+O/dyBVVXXMxrhMvJud7bcEQ==",
         "domain": "login.siat.sat.gob.mx",
         "path": "/",
         "expires": -1,
@@ -141,32 +131,12 @@
     },
     {
         "name": "f5avrbbbbbbbbbbbbbbbb",
-        "value": "DECDAMEKLNJMBGMKGGDPOFGHKJFGPICFNKALAPCDDHICAOPLIOPGPIBDDCBNPLNIAPDDFOKABGFJCPOCMADAGGABIADJBKBBCHCCGEGKLOMMMLKFJEOINPLABMNAILDM",
+        "value": "KCAKIGBMKNNFFMLKDDLELEEAPDEFLCPFCINJOBBJBIKLJHMDEMHGCIMNLGMDOBPGCODDNPAHDLGEDEGJIBIAGEPGHGPCINNMAJFOKHILPCGIKDGHIBBKJNIEDFICGIMK",
         "domain": "login.siat.sat.gob.mx",
         "path": "/",
         "expires": -1,
         "httpOnly": true,
         "secure": true,
-        "sameSite": "Lax"
-    },
-    {
-        "name": "IPCZQX03f97ac564",
-        "value": "0e00f50041151ea8540871fd92b074b857597f49",
-        "domain": ".rfcampc.siat.sat.gob.mx",
-        "path": "/",
-        "expires": -1,
-        "httpOnly": false,
-        "secure": false,
-        "sameSite": "Lax"
-    },
-    {
-        "name": "JSESSIONID",
-        "value": "Zy6lQrEc2qnncmgLymJ5TpPIXPyohfP5MJG8hJoqqYcoVZ_pTdO0!1638424319!-1862609029",
-        "domain": "rfcampc.siat.sat.gob.mx",
-        "path": "/",
-        "expires": -1,
-        "httpOnly": true,
-        "secure": false,
         "sameSite": "Lax"
     }
 ]
